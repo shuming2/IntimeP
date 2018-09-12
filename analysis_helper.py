@@ -159,7 +159,7 @@ class AnalysisHelper:
     @staticmethod
     def _write_by_month(f, data):
         months = data.keys()
-        f.write(',{}\n'.format(',,,'.join([month.strftime('%Y%m') for month in months])))
+        f.write(',{}\n'.format(',,,'.join([month.strftime('%Y/%m') for month in months])))
         f.write('区县' + ',受理量,及时量,及时率' * len(months) + '\n')
         for i in range(len(data[list(months)[0]])):
             count = 0
