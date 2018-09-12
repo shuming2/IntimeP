@@ -9,7 +9,7 @@ class AnalysisHelper:
             f = open(filepath, 'r')
         except:
             raise FileNotFoundError
-
+        self.input_filepath = filepath
         column_lst = ['区县', '主题', '所属小区', '业务受理时间', '结束时间']
         column_i = []
         # Get column index
@@ -41,7 +41,7 @@ class AnalysisHelper:
             result = self._analyse_by_month(data)
         else:   # mode == 'file'
             result = self._analyse_by_file(data)
-        self._write_to_csv(result, mode)
+        self._write_to_csv(result, mode, contain_ims, contain_business)
 
     @staticmethod
     def _screen_business(data):
@@ -124,7 +124,7 @@ class AnalysisHelper:
             result_dic[month] = self._analyse_by_file(months_dic[month])
         return result_dic
 
-    def _write_to_csv(self, data, mode='file'):
+    def _write_to_csv(self, data, mode='file', contain_ims=False, contain_business=True):
         key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                              r'Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders')
         desktop_path = str(winreg.QueryValueEx(key, "Desktop")[0])
@@ -137,6 +137,18 @@ class AnalysisHelper:
             self._write_by_month(f, data)
         elif mode == 'file':
             self._write_by_file(f, data)
+
+        f.write('\n\n')
+        f.write('数据源文件: {}\n'.format(self.input_filepath))
+        if contain_ims:
+            f.write('未剔除IMS\n')
+        else:
+            f.write('剔除IMS\n')
+        if contain_business:
+            f.write('未剔除聚类\n')
+        else:
+            f.write('剔除聚类\n')
+
         f.close()
 
     @staticmethod

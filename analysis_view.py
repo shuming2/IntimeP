@@ -75,8 +75,8 @@ class AnalysisView:
             return
 
         analysis_helper.analyse(mode=self.mode_var.get(),
-                                contain_ims=not self.screen_ims_var,
-                                contain_business=not self.screen_business_checkbutton)
+                                contain_ims=not self.screen_ims_var.get(),
+                                contain_business=not self.screen_business_var.get())
 
     @staticmethod
     def _resource_path(relative):
