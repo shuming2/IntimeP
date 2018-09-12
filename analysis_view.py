@@ -1,3 +1,5 @@
+import os
+import sys
 import tkinter
 from tkinter import ttk, filedialog, messagebox
 from analysis_helper import AnalysisHelper
@@ -8,6 +10,9 @@ class AnalysisView:
         self.root = tkinter.Tk()
         self.root.title("及时率生成小工具")
         self.root.resizable(0, 0)
+        icopath = self._resource_path(r'panda_128px_1202518_easyicon.net.ico')
+        if os.path.exists(icopath):
+            self.root.iconbitmap(icopath)
 
         self.frame = ttk.Frame(self.root)
         self.frame['padding'] = 20
@@ -72,3 +77,9 @@ class AnalysisView:
         analysis_helper.analyse(mode=self.mode_var.get(),
                                 contain_ims=not self.screen_ims_var,
                                 contain_business=not self.screen_business_checkbutton)
+
+    @staticmethod
+    def _resource_path(relative):
+        if hasattr(sys, "_MEIPASS"):
+            return os.path.join(sys._MEIPASS, relative)
+        return os.path.join(relative)
