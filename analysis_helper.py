@@ -1,7 +1,6 @@
 import datetime
 import os
 import winreg
-from functools import reduce
 
 
 class AnalysisHelper:
@@ -28,21 +27,19 @@ class AnalysisHelper:
         for line in f:
             line_lst = line.strip().split(',')
             self.data.append([line_lst[i] for i in column_i])
-
         f.close()
 
-    def analyse(self, mode='month', contain_ims=False, contain_business=True):
+    def analyse(self, mode='file', contain_ims=False, contain_business=True):
         data = self.data
         if not contain_ims:
             data = self._screen_ims(data)
         if not contain_business:
             data = self._screen_business(data)
-
         if mode == 'day':
             result = self._analyse_by_day(data)
         elif mode == 'month':
             result = self._analyse_by_month(data)
-        elif mode == 'file':
+        else:   # mode == 'file'
             result = self._analyse_by_file(data)
         self._write_to_csv(result, mode)
 
@@ -146,28 +143,46 @@ class AnalysisHelper:
     def _write_by_day(f, data):
         days = data.keys()
         f.write(',{}\n'.format(',,,'.join([day.strftime('%m/%d') for day in days])))
-        f.write('区县,受理量,及时量,及时率\n')
-        for ele in data:
-            f.write(','.join(map(str, ele)) + '\n')\
+        f.write('区县' + ',受理量,及时量,及时率' * len(days) + '\n')
+        for i in range(len(data[list(days)[0]])):
+            count = 0
+            for ele in data:
+                if not count:
+                    county_data = data[ele][i]
+                else:
+                    county_data = data[ele][i][1:]
+                f.write(','.join(map(str, county_data)))
+                count += 1
+                f.write(',')
+            f.write('\n')
 
     @staticmethod
     def _write_by_month(f, data):
         months = data.keys()
-        f.write(',{}\n'.format(',,,'.join([month.strftime('%m') for month in months])))
-        f.write('区县,受理量,及时量,及时率\n')
-        # for ele in data:
-        #     f.write(','.join(map(str, ele)) + '\n')  TODO
+        f.write(',{}\n'.format(',,,'.join([month.strftime('%Y%m') for month in months])))
+        f.write('区县' + ',受理量,及时量,及时率' * len(months) + '\n')
+        for i in range(len(data[list(months)[0]])):
+            count = 0
+            for ele in data:
+                if not count:
+                    county_data = data[ele][i]
+                else:
+                    county_data = data[ele][i][1:]
+                f.write(','.join(map(str, county_data)))
+                count += 1
+                f.write(',')
+            f.write('\n')
 
     @staticmethod
     def _write_by_file(f, data):
         f.write('区县,受理量,及时量,及时率\n')
-        # for ele in data:
-        #     f.write(','.join(map(str, ele)) + '\n')  TODO
+        for ele in data:
+            f.write(','.join(map(str, ele)) + '\n')
 
 
 def main():
-    analysis_helper = AnalysisHelper('20180827022357888.csv')
-    analysis_helper.analyse()
+    analysis_helper = AnalysisHelper('20180912091237558.csv')
+    analysis_helper.analyse(mode='month')
 
 
 if __name__ == '__main__':

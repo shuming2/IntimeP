@@ -69,6 +69,6 @@ class AnalysisView:
             messagebox.showerror('错误', '文件需包含<区县>, <主题>, <所属小区>, <业务受理时间>, <结束时间>')
             return
 
-        analysis_helper.analyse(mode=self.mode_var,
+        analysis_helper.analyse(mode=self.mode_var.get(),
                                 contain_ims=not self.screen_ims_var,
                                 contain_business=not self.screen_business_checkbutton)
