@@ -41,7 +41,8 @@ class AnalysisHelper:
             result = self._analyse_by_month(data)
         else:   # mode == 'file'
             result = self._analyse_by_file(data)
-        self._write_to_csv(result, mode, contain_ims, contain_business)
+        output_file_name = self._write_to_csv(result, mode, contain_ims, contain_business)
+        return output_file_name
 
     @staticmethod
     def _screen_business(data):
@@ -150,6 +151,7 @@ class AnalysisHelper:
             f.write('剔除聚类\n')
 
         f.close()
+        return new_file_name
 
     @staticmethod
     def _write_by_day(f, data):
