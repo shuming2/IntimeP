@@ -140,7 +140,16 @@ class AnalysisHelper:
             self._write_by_file(f, data)
 
         f.write('\n\n')
-        f.write('数据源文件: {}\n'.format(self.input_filepath))
+
+        # UnicodeEnocodeError raised by filename
+        f.write('数据源文件: ')
+        for char in self.input_filepath:
+            try:
+                f.write(char)
+            except UnicodeEncodeError:
+                f.write('?')
+        f.write('\n')
+
         if contain_ims:
             f.write('未剔除IMS\n')
         else:
