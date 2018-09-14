@@ -63,15 +63,19 @@ class AnalysisHelper:
             max_time = datetime.datetime(max_time.year, max_time.month, max_time.day, 0, 0, 0)
         else:
             max_time = datetime.datetime(max_time.year, max_time.month, max_time.day, 12, 0, 0)
-        if end < max_time:
-            return True
+        if end:
+            if end < max_time:
+                return True
         else:
             return False
 
     @staticmethod
     def _to_safe_time_format(dt):
         if type(dt) == str:
-            dt = datetime.datetime.strptime(dt, '%Y-%m-%d %H:%M:%S')
+            try:
+                dt = datetime.datetime.strptime(dt, '%Y-%m-%d %H:%M:%S')
+            except ValueError:
+                return None
         return dt
 
     def _analyse_by_file(self, data):
